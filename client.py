@@ -56,9 +56,9 @@ def UDP_listen():
 
         if data == "show-files":
             my_files = Functions.get_all_files()
-            content = ""
+            content = "FILES:"
             for file_object in my_files:
-                content += file_object.to_string()
+                content += file_object.to_string() + ';'
             client_socket.sendto(content,(addr, UDP_PORT))
 
 
