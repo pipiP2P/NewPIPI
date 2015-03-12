@@ -4,54 +4,28 @@ import time
 import threading
 import File
 #import Functions
+from Protocol import *
 
-SERVER_IP = "10.20.90.57"
+SERVER_IP = "10.10.10.68"
 addr = SERVER_IP
 ADDRESSES = []
 FILES = []
 UDP_PORT = 50000
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 client_socket.sendto("Hello",(SERVER_IP, UDP_PORT))
-rlist = select.select([client_socket],[],[],5)
-if rlist[0]:
-    # The server responded
-    data, addr= client_socket.recvfrom(4096)
-    debug_print("We received" + data + "from server")
-    ADDRESSES = data.split(';')
-    debug_print("Connected to the main server")
-    debug_print("We have the following addresses:\n" + ADDRESSES)
 
-else:
-    while not ADDRESSES:
-        # TODO: Check if the IP is correct
-        addr = raw_input("Could not connect to the IP " + addr + "\nplease input other IP\n")
-        client_socket.sendto("Hello",(addr, UDP_PORT))
-        rlist = select.select([client_socket],[],[], 5)
-        if rlist[0]:
-            ADDRESSES.append(addr)  # That user is online
-            data, addr = client_socket.recvfrom(4096)
-            debug_print("Connected to this address: " + addr)
-            ADDRESSES += data.split(';')
-            debug_print("We have the following addresses:\n" + ADDRESSES)
-
-for addr in ADDRESSES:
-    client_socket.sendto("show-files",(addr, UDP_PORT))
-
-listen_thread = threading.Thread(target=UDP_listen())
-listen_thread.start()
-
-
-def handle_data():
-    return
-
-
+def debug_print(data):
+    print data
 
 
 def UDP_listen():
     while True:
-        data, addr = client_socket.recvfrom(4096)
+        print 'CHECK'
+        new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        new_socket.bind(('10.10.10.107', 60000))
+        data, addr = new_socket.recvfrom(4096)
         print "Received this data" + data
-        command_num, file_name, answer_type, file_hash, file_parts_num, file_size, file_description = convert_message(data)
+        command_num, file_name, file_hash, file_parts_num, file_size, file_description, answer_type = convert_message(data)
         if data == "Hello":
             debug_print(addr + "Connected")
             client_socket.sendto(';'.join(ADDRESSES), (addr,UDP_PORT))
@@ -76,6 +50,38 @@ def UDP_listen():
         if int(command_num) == 1:
             None
 
+rlist = select.select([client_socket],[],[], 5)
+if rlist[0]:
+    # The server responded
+    data, addr= client_socket.recvfrom(4096)
+    debug_print("We received" + data + "from server")
+    if data != 'None':
+        ADDRESSES = data.split(';')
+    debug_print("Connected to the main server")
+    debug_print("We have the following addresses:\n" + str(ADDRESSES))
 
-def debug_print(data):
-    print data
+else:
+    while not ADDRESSES:
+        # TODO: Check if the IP is correct
+        addr = raw_input("Could not connect to the IP " + addr + "\nplease input other IP\n")
+        client_socket.sendto("Hello",(addr, UDP_PORT))
+        rlist = select.select([client_socket],[],[], 5)
+        if rlist[0]:
+            ADDRESSES.append(addr)  # That user is online
+            data, addr = client_socket.recvfrom(4096)
+            debug_print("Connected to this address: " + str(addr))
+            if data != 'None':
+                ADDRESSES += data.split(';')
+            debug_print("We have the following addresses:\n" + str(ADDRESSES))
+
+for addr in ADDRESSES:
+    print str(addr)
+    client_socket.sendto("show-files",(addr, UDP_PORT))
+
+listen_thread = threading.Thread(target=UDP_listen())
+listen_thread.start()
+
+
+def handle_data():
+    return
+
