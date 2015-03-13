@@ -19,9 +19,8 @@ def UDP_listener():
     This function starts a new thread that listens
     to incoming UDP packets
     """
-    listen_thread = threading.Thread(target=UDP_listen())
+    listen_thread = threading.Thread(target=UDP_listen)
     listen_thread.start()
-    debug_print("Started the thread")
 
 
 def handle_data():
@@ -41,8 +40,8 @@ def UDP_listen():
         new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         new_socket.bind(("", 50000))
         data, addr = new_socket.recvfrom(4096)
-        debug_print("Received this data " + data + " from " + addr[0])
         addr = addr[0]
+        debug_print("Received this data " + data + " from " + addr)
         command_num, file_name, file_hash, file_parts_num, file_size, file_description, answer_type = convert_message(data)
         if data == "Hello":
             debug_print(addr + "Connected")
@@ -70,7 +69,7 @@ def UDP_listen():
 
 
 def print_addresses():
-    print("Addresses:\n\t" + "\t".join(ADDRESSES))
+    print("Addresses:\n\t" + "\n\t".join(ADDRESSES))
 
 
 def ask_for_files():
