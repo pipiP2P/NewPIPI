@@ -20,17 +20,17 @@ def convert_message(message):
     if len(message) == 2:
         if command != FILE_REQUEST:
             raise NameError("Protocol Error")
-        return (message[0], message[1], 'None', 'None', 'None', 'None', 'None')
+        return message[0], message[1], 'None', 'None', 'None', 'None', 'None'
 
     if len(message) == 7:
         if command != FILE_RESPONSE:
             raise NameError("Protocol Error")
-        return (message[0], message[1], message[2], message[3], message[4], message[5], message[6])
+        return message[0], message[1], message[2], message[3], message[4], message[5], message[6]
 
     if len(message) == 3:
         if command != PART_REQUEST:
             raise NameError("Protocol Error")
-        return (message[0], message[1], message[2], message[3], message[4], message[5], message[6])
+        return message[0], message[1], message[2], message[3], message[4], message[5], message[6]
 
     if len(message) == 4:
         if command != PART_RESPONSE:
@@ -39,10 +39,10 @@ def convert_message(message):
 
 
 def file_req_message(message):
-    return (message[0], message[1], 'None', 'None', 'None', 'None', 'None')
+    return message[0], message[1], 'None', 'None', 'None', 'None', 'None'
 
 
 def file_res_message(message):
-    return (message[0], message[1], message[2], message[3], message[4], message[5], message[6])
+    return message[0], message[1], message[2], message[3], message[4], message[5], message[6]
 
 

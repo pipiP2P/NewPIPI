@@ -8,8 +8,15 @@ class File_Info:
         self._hash = _hash
 
     def to_string(self):
-        return (self.name.encode("base64") + ";" + self.description.encode("base64") + ";" + str(self.size) + ";" +
-                str(self.num_of_parts) + ";" + self._hash)
+        return (self.name + ";" + self.description + ";" + str(self.size) + ";" +
+                str(self.num_of_parts) + ";" + self._hash).encode("base64")
+
+    def print_file_info(self):
+        print self.name
+        print "\tFile Description: " + self.description
+        print "\tFile Size: " + str(self.size)
+        print "\tNumber of Parts: " + str(self.num_of_parts)
+        print "\tFile Hash " + self._hash
 
     def get_hash(self):
         return self._hash

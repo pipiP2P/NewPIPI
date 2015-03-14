@@ -11,6 +11,12 @@ PATH = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0) + "\\PiPi"
 MB = 1000000
 
 
+def decrypt_file(file_object):
+    file_info = file_object.decode("base64")
+    file_name, file_description, file_size, file_num_of_parts, file_hash = file_info.split(';')
+    return File_Info(file_name, file_description, file_size, file_num_of_parts, file_hash)
+
+
 def check_if_new_file(files_list):
     """
     Checks if a new file was added to the sharing folder
