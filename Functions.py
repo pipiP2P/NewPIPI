@@ -59,13 +59,14 @@ def check_if_new_file(files_list):
     return new_files_list == files_list
 
 
-def get_file_object(file_path, name):
+def get_file_object(file_folder, name):
     """
     Returns an object of type File_Info for the file 'name' in file_path
     """
-    _hash = sha1_of_file(file_path + "\\" + name)
-    file_size = os.path.getsize(file_path)
-    description_path = file_path + "\\" + _hash + ".txt"
+    full_path = file_folder + "\\" + name
+    _hash = sha1_of_file(full_path)
+    file_size = os.path.getsize(full_path)
+    description_path = file_folder + "\\" + _hash + ".txt"
     if os.path.isfile(description_path):
         description = open(description_path, 'r').read()
     else:
