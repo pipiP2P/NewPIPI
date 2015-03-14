@@ -13,12 +13,14 @@ OUR_FILES = []
 PEERS_FILES = []
 UDP_PORT = 50000
 BUFFER_SIZE = 4096
+TIMEOUT = 2
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def initialize():
     global OUR_FILES
     OUR_FILES = get_all_files()
+    print_our_files()
 
 
 def print_our_files():
@@ -133,8 +135,11 @@ def connect_to_server():
     new_listen_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     new_listen_socket.bind(("", UDP_PORT))
     while not connected:
-        client_socket.sendto("Hello", (addr, UDP_PORT))
-        rlist = select.select([new_listen_socket], [], [], 5)
+        try:
+            client_socket.sendto("Hello", (addr, UDP_PORT))
+        except:
+            pass
+        rlist = select.select([new_listen_socket], [], [], TIMEOUT)
         if rlist[0]:
             # The server responded
             data, address = new_listen_socket.recvfrom(BUFFER_SIZE)
