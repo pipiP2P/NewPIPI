@@ -98,9 +98,8 @@ def UDP_listen():
     It will be run a new thread
     """
     new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    new_socket.bind(("0.0.0.0", UDP_PORT))
     while True:
-        new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        new_socket.bind(("", UDP_PORT))
         data, addr = new_socket.recvfrom(BUFFER_SIZE)
         addr = addr[0]
         debug_print("Received this data " + data + " from " + addr)
@@ -113,9 +112,6 @@ def UDP_listen():
 
         elif data.startswith("FILES:"):
             get_files_list(data)
-
-        else:
-            handle_data(data)
 
 
 def print_addresses():
@@ -131,10 +127,16 @@ def debug_print(data):
     print data
 
 
+def is_ip(ip):
+    """
+    Returns True if the provided ip is an IP
+    """
+    return True
+
 def add_addresses(data):
     if data != 'None':
         for address in data.split(';'):
-            if address != socket.gethostbyname(socket.gethostname()) and address not in ADDRESSES:
+            if address != socket.gethostbyname(socket.gethostname()) and address not in ADDRESSES and is_ip(address):
                 ADDRESSES.append(address)
         if ADDRESSES:
             print_addresses()
@@ -172,6 +174,7 @@ def connect_to_server():
 if __name__ == '__main__':
     initialize()
     connect_to_server()
-    ask_for_files()
     UDP_listener()
+    ask_for_files()
+    time.sleep(5)
     print_peers_files()
