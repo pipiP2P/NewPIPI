@@ -18,17 +18,23 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def initialize():
+    """
+    Initalize our files list
+    OUR_FILES will be list of object of type FILE_INFO
+    """
     global OUR_FILES
     OUR_FILES = get_all_files()
     print_our_files()
 
 
 def print_our_files():
+    debug_print("Our files:")
     for file_object in OUR_FILES:
         file_object.print_file_info()
 
 
 def print_peers_files():
+    debug_print("Peers files:")
     for file_object in PEERS_FILES:
         file_object.print_file_info()
 
@@ -54,6 +60,11 @@ def handle_data(data):
 
 
 def new_connection(addr):
+    """
+    We received new connection from addr
+    We will send him the addresses we have or None
+    Then we will add him to our peers list
+    """
     debug_print(addr + "Connected")
     if ADDRESSES:
         client_socket.sendto(';'.join(ADDRESSES), (addr, UDP_PORT))
@@ -71,6 +82,7 @@ def send_files_list(addr):
         content += file_object.to_string() + ';'
     content = content[:-1]  # Remove the last ;
     client_socket.sendto(content, (addr, UDP_PORT))
+    client_socket.sendto("show-files",addr(UDP_PORT))
 
 
 def get_files_list(data):
@@ -85,6 +97,7 @@ def UDP_listen():
     This function listens for incoming UDP packets
     It will be run a new thread
     """
+    new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     while True:
         new_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         new_socket.bind(("", UDP_PORT))
@@ -131,19 +144,19 @@ def add_addresses(data):
 
 def connect_to_server():
     global ADDRESSES, addr
-    connected = False
+    connected = False  # While we aren't connected to any server
     new_listen_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     new_listen_socket.bind(("", UDP_PORT))
     while not connected:
         try:
-            client_socket.sendto("Hello", (addr, UDP_PORT))
+            new_listen_socket.sendto("Hello", (addr, UDP_PORT))
         except:
             pass
         rlist = select.select([new_listen_socket], [], [], TIMEOUT)
         if rlist[0]:
             # The server responded
             data, address = new_listen_socket.recvfrom(BUFFER_SIZE)
-            address = address[0]
+            address = address[0]  # address was a tuple of address and port
             if address == addr:
                 debug_print("Connected to " + ("Main Server" if addr == SERVER_IP else addr))
                 debug_print("We received " + data + " from " + ("Main server" if addr == SERVER_IP else addr))
@@ -161,3 +174,4 @@ if __name__ == '__main__':
     connect_to_server()
     ask_for_files()
     UDP_listener()
+    print_peers_files()
