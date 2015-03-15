@@ -6,7 +6,7 @@ import File
 from Functions import *
 from Protocol import *
 
-SERVER_IP = "192.168.0.105"
+SERVER_IP = "10.10.10.200"
 addr = SERVER_IP
 ADDRESSES = []
 OUR_FILES = []
@@ -133,10 +133,10 @@ def connect_to_server():
     global ADDRESSES, addr
     connected = False
     new_listen_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    new_listen_socket.bind(("", UDP_PORT))
+    new_listen_socket.bind(("0.0.0.0", UDP_PORT))
     while not connected:
         try:
-            client_socket.sendto("Hello", (addr, UDP_PORT))
+            new_listen_socket.sendto("Hello", (addr, UDP_PORT))
         except:
             pass
         rlist = select.select([new_listen_socket], [], [], TIMEOUT)
