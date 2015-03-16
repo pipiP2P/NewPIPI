@@ -6,7 +6,7 @@ import File
 from Functions import *
 from Protocol import *
 
-SERVER_IP = "10.10.10.200"
+SERVER_IP = "192.168.0.109"
 addr = SERVER_IP
 ADDRESSES = []
 OUR_FILES = []
@@ -77,12 +77,15 @@ def send_files_list(addr):
     debug_print("{0} asked us for our files list!".format(addr))
     if addr not in ADDRESSES:
         ADDRESSES.append(addr)
+    count = 0
     content = "FILES:"
     for file_object in OUR_FILES:
+        count += 1
         content += file_object.to_string() + ';'
-    content = content[:-1]  # Remove the last ;
+    if count:
+        content = content[:-1]  # Remove the last ;
     client_socket.sendto(content, (addr, UDP_PORT))
-    client_socket.sendto("show-files",addr(UDP_PORT))
+    client_socket.sendto("show-files",(addr, UDP_PORT))
 
 
 def get_files_list(data):
