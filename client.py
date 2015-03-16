@@ -70,7 +70,7 @@ def new_connection(addr):
         client_socket.sendto(';'.join(ADDRESSES), (addr, UDP_PORT))
     else:
         client_socket.sendto("None", (addr, UDP_PORT))
-    add_addresses(addr)
+    ask_for_files()  # This client has connected to us, ask him about his files list
 
 
 def send_files_list(addr):
@@ -143,7 +143,11 @@ def is_ip(ip):
     """
     Returns True if the provided ip is an IP
     """
-    return True
+    try:
+        socket.inet_aton(ip)
+        return True
+    except socket.error:
+        return False
 
 def add_addresses(data):
     if data != 'None':

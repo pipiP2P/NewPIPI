@@ -14,7 +14,7 @@ class File_Info:
     def print_file_info(self):
         print self.name
         print "\tFile Description: " + self.description
-        print "\tFile Size: " + str(self.size)
+        print "\tFile Size: " + str(self.size) + " Bytes"
         print "\tNumber of Parts: " + str(self.num_of_parts)
         print "\tFile Hash " + self._hash
 
