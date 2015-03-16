@@ -42,11 +42,10 @@ def find_files():
     return files_list
 
 
-def decrypt_file(file_object):
+def decrypt_file(file_info):
     """
     Receives a base64 file to_string and returns a new file object
     """
-    file_info = file_object.decode("base64")
     file_name, file_description, file_size, file_num_of_parts, file_hash = file_info.split(';')
     return File_Info(file_name, file_description, file_size, file_num_of_parts, file_hash)
 

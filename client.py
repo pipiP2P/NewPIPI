@@ -77,22 +77,31 @@ def send_files_list(addr):
     debug_print("{0} asked us for our files list!".format(addr))
     if addr not in ADDRESSES:
         ADDRESSES.append(addr)
-    count = 0
+        client_socket.sendto("show-files",(addr, UDP_PORT))
     content = "FILES:"
-    for file_object in OUR_FILES:
-        count += 1
-        content += file_object.to_string() + ';'
-    if count:
+    if OUR_FILES:
+        for file_object in OUR_FILES:
+            content += file_object.to_string() + ';'
         content = content[:-1]  # Remove the last ;
+    else:
+        content += "None"
     client_socket.sendto(content, (addr, UDP_PORT))
-    client_socket.sendto("show-files",(addr, UDP_PORT))
 
 
 def get_files_list(data):
-    list_of_files = data[6:].split(';')
-    if len(list_of_files) > 0:
+    """
+    Gets response of show-files, and creates the File Info objects
+
+    """
+    list_of_files = data[6:]
+    if list_of_files != "None":
+        list_of_files = list_of_files.split(';')
         for file_object in list_of_files:
-            PEERS_FILES.append(File_Info(decrypt_file(file_object)))
+            file_info_after_base64 = file_object.decode("base64")
+            file_info_object = decrypt_file(file_info_after_base64)
+            file_info_object.print_file_info()
+            PEERS_FILES.append(file_info_object)
+
 
 
 def UDP_listen():
@@ -179,5 +188,3 @@ if __name__ == '__main__':
     connect_to_server()
     UDP_listener()
     ask_for_files()
-    time.sleep(5)
-    print_peers_files()
