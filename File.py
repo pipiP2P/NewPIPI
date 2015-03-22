@@ -1,5 +1,5 @@
 class File_Info:
-
+    PARTS_PATH = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0) + "Completed"
     def __init__(self, name, description, size, num_of_parts, _hash):
         self.name = name
         self.description = description
@@ -28,12 +28,9 @@ class File_Info:
         return self.size
 
     def get_file_content(self, part_number):
-        # return the content of file at part number
-        file_path = PATH + self.name
-        file_object = file_path.open('rb')
-        file_content = file_object.read()
-        file_object.close()
-        return file_content[0:10]
+        if part_number <= self.num_of_parts:
+            requested_part_path = PARTS_PATH + "COMPLETED" + "\\" + self.name + str(part_number)
+
 
     def get_num_of_parts(self):
         return self.num_of_parts
