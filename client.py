@@ -96,7 +96,7 @@ def send_files_list(addr):
             content += file_object.to_string() + ';'
         content = content[:-1]
         check_peers = False
-    elif check_peers and check_our:
+    if check_peers and check_our:
         content += "None"
     client_socket.sendto(content, (addr, UDP_PORT))
 
@@ -143,23 +143,7 @@ def UDP_listen():
                 get_files_list(data)
 
             elif data.startswith("PARTCHECK;"):
-
-
-        if msvcrt.kbhit():
-            key = msvcrt.getch()
-            # if user hit enter key
-            if key == chr(13):
-                sys.stdout.write('\n')
-                msg = request_part(content)
-                send_msg_to_all(msg, new_socket)
-                content = ''
-            elif key == chr(127) or key == chr(8):
-                content = content[:-1]
-                sys.stdout.write("\b")
-            else:
-                content += key
-                sys.stdout.write(key)
-
+                None
 
 def print_addresses():
     print("Addresses:\n\t" + "\n\t".join(ADDRESSES))
